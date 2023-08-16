@@ -1,3 +1,4 @@
+import { formatDateString } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -24,6 +25,7 @@ interface Props {
     };
   }[];
   isComment?: boolean;
+  communityPage?: boolean;
 }
 
 export default function ThreadCard({
@@ -108,7 +110,26 @@ export default function ThreadCard({
             </div>
           </div>
         </div>
+        {/* TODO: delete thread */}
+        {/* TODO: show comment logos */}
       </div>
+      {!isComment && community && (
+        <Link
+          href={`/communities/${community.id}`}
+          className='mt-5 flex items-center'>
+          <p className='text-subtle-medium text-gray-1'>
+            {formatDateString(createdAt)} - {community.name} Community
+          </p>
+
+          <Image
+            src={community.image}
+            alt={community.name}
+            width={20}
+            height={20}
+            className='ml-1 rounded-full object-cover'
+          />
+        </Link>
+      )}
     </article>
   );
 }

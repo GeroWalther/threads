@@ -1,5 +1,6 @@
 'use server';
 
+import { fetchCommunityPosts } from '@/lib/actions/community.actions';
 import { fetchUserPosts } from '@/lib/actions/user.actions';
 import { redirect } from 'next/navigation';
 import ThreadCard from '../cards/ThreadCard';
@@ -8,10 +9,22 @@ interface Props {
   currentUserId: string;
   accountId: string;
   accountType: string;
+  communityPage: boolean;
 }
 
-const ThreadsTab = async ({ currentUserId, accountId, accountType }: Props) => {
-  let result = await fetchUserPosts(accountId);
+const ThreadsTab = async ({
+  currentUserId,
+  accountId,
+  accountType,
+  communityPage,
+}: Props) => {
+  let result: any;
+
+  if (accountType === 'Community') {
+    result = await fetchCommunityPosts(accountId);
+  } else {
+    result = await fetchUserPosts(accountId);
+  }
 
   if (!result) redirect('/');
 
@@ -33,7 +46,7 @@ const ThreadsTab = async ({ currentUserId, accountId, accountType }: Props) => {
                 }
               : {
                   name: thread.author.name,
-                  image: thread.auhtor.image,
+                  image: thread.author.image,
                   id: thread.author.id,
                 }
           }
