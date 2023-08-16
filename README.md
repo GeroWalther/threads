@@ -1,3 +1,5 @@
+Thread inspired social media web app using Next .js 13 with the App Router and server components, TypeScript, ShadCN and TailwindCSS and MongoDB with Mongoose for the backend
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
