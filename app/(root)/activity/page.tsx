@@ -12,7 +12,7 @@ export default async function Page() {
   if (!userInfo?.onboarded) redirect('/onboarding');
 
   const activity = await getActivity(userInfo._id);
-  console.log(activity);
+
   return (
     <section>
       <h1 className='head-text mb-10'>Activity</h1>

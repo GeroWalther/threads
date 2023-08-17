@@ -26,8 +26,13 @@ const ThreadsTab = async ({
     result = await fetchUserPosts(accountId);
   }
 
-  if (!result) redirect('/');
+  const community = {
+    name: result.name,
+    image: result.image,
+    id: result.id,
+  };
 
+  if (!result) redirect('/');
   return (
     <section className='mt-9 flex flex-col gap-10'>
       {result.threads.map((thread: any) => (
@@ -50,9 +55,10 @@ const ThreadsTab = async ({
                   id: thread.author.id,
                 }
           }
-          community={thread.community} // todo
+          community={community}
           createdAt={thread.createdAt}
           comments={thread.children}
+          communityPage
         />
       ))}
     </section>

@@ -1,4 +1,4 @@
-import UserCard from '@/components/cards/UserCard';
+import SearchComp from '@/components/shared/SearchComp';
 import { fetchUser, fetchUsers } from '@/lib/actions/user.actions';
 import { currentUser } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
@@ -18,6 +18,7 @@ export default async function Page() {
     pageNumber: 1,
     pageSize: 25,
   });
+  console.log(result);
   return (
     <section>
       <h1 className='head-text mb-10'>Search</h1>
@@ -26,18 +27,7 @@ export default async function Page() {
         {result.users.length === 0 ? (
           <p className='no-result'>No users</p>
         ) : (
-          <>
-            {result.users.map((person) => (
-              <UserCard
-                key={person.id}
-                id={person.id}
-                name={person.name}
-                username={person.username}
-                imgUrl={person.image}
-                personType='User'
-              />
-            ))}
-          </>
+          <SearchComp result={JSON.parse(JSON.stringify(result))} />
         )}
       </div>
     </section>

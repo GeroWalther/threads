@@ -38,6 +38,7 @@ export default function ThreadCard({
   createdAt,
   comments,
   isComment,
+  communityPage = false,
 }: Props): JSX.Element {
   return (
     <article
@@ -69,13 +70,13 @@ export default function ThreadCard({
 
             <div className={`${isComment && 'mb-10'} mt-5 flex flex-col gap-3`}>
               <div className='flex gap-3.5'>
-                <Image
+                {/* <Image
                   src='/assets/heart-gray.svg'
                   alt='heart'
                   width={24}
                   height={24}
                   className='cursor-pointer object-contain'
-                />
+                /> */}
                 <Link href={`/thread/${id}`}>
                   <Image
                     src='/assets/reply.svg'
@@ -85,20 +86,20 @@ export default function ThreadCard({
                     className='cursor-pointer object-contain'
                   />
                 </Link>
-                <Image
+                {/* <Image
                   src='/assets/repost.svg'
                   alt='repost'
                   width={24}
                   height={24}
                   className='cursor-pointer object-contain'
-                />
-                <Image
+                /> */}
+                {/* <Image
                   src='/assets/share.svg'
                   alt='share'
                   width={24}
                   height={24}
                   className='cursor-pointer object-contain'
-                />
+                /> */}
               </div>
               {isComment && comments.length > 0 && (
                 <Link href={`/thread/${id}`}>
@@ -113,7 +114,7 @@ export default function ThreadCard({
         {/* TODO: delete thread */}
         {/* TODO: show comment logos */}
       </div>
-      {!isComment && community && (
+      {!isComment && community && !communityPage && (
         <Link
           href={`/communities/${community.id}`}
           className='mt-5 flex items-center'>
@@ -129,6 +130,13 @@ export default function ThreadCard({
             className='ml-1 rounded-full object-cover'
           />
         </Link>
+      )}
+      {!isComment && community && communityPage && (
+        <div className='mt-5 flex items-center'>
+          <p className='text-subtle-medium text-gray-1'>
+            {formatDateString(createdAt)} - {community.name}
+          </p>
+        </div>
       )}
     </article>
   );
