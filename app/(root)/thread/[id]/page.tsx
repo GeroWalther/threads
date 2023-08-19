@@ -14,7 +14,7 @@ export default async function Page({ params }: { params: { id: string } }) {
   if (!userInfo?.onboarded) redirect('/onboarding');
 
   const thread = await fetchThreadById(params.id);
-  console.log(thread.children);
+
   return (
     <section className='relative'>
       <div>
@@ -28,6 +28,7 @@ export default async function Page({ params }: { params: { id: string } }) {
           community={thread.community}
           createdAt={thread.createdAt}
           comments={thread.children}
+          likesCount={thread.likesCount}
         />
       </div>
 
@@ -51,6 +52,7 @@ export default async function Page({ params }: { params: { id: string } }) {
             community={childItem.community}
             createdAt={childItem.createdAt}
             comments={childItem.children}
+            likesCount={childItem.likesCount}
             isComment
           />
         ))}

@@ -34,6 +34,11 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
         model: User,
         select: '_id name parentId image', // Select only _id and username fields of the author
       },
+    })
+    .populate({
+      path: 'likes', // Populate the likes field
+      model: User,
+      select: '_id name', // Select only _id and name fields of the users who liked the thread
     });
 
   // Count the total number of top-level posts (threads) i.e., threads that are not comments.
@@ -45,7 +50,13 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
 
   const isNext = totalPostsCount > skipAmount + posts.length;
 
-  return { posts, isNext };
+  // Calculate the likes count for each post
+  const postsWithLikesCount = posts.map((post) => ({
+    ...post.toObject(),
+    likesCount: post.likes.length,
+  }));
+
+  return { posts: postsWithLikesCount, isNext };
 }
 
 interface Params {
@@ -160,11 +171,9 @@ export async function deleteThread(id: string, path: string): Promise<void> {
     throw new Error(`Failed to delete thread: ${error.message}`);
   }
 }
-
 export async function fetchThreadById(threadId: string) {
-  connectToDB();
-
   try {
+    connectToDB();
     const thread = await Thread.findById(threadId)
       .populate({
         path: 'author',
@@ -195,9 +204,25 @@ export async function fetchThreadById(threadId: string) {
           },
         ],
       })
+      .populate({
+        path: 'likes', // Populate the likes field
+        model: User,
+        select: '_id name',
+      })
       .exec();
 
-    return thread;
+    const likesCount = thread.likes.length;
+    // Create a new object with the original thread's properties and the calculated likesCount
+    const threadWithLikesCount = {
+      ...thread.toObject(),
+      likesCount,
+      children: thread.children.map((childItem: any) => ({
+        ...childItem.toObject(),
+        likesCount: childItem.likes.length,
+      })),
+    };
+
+    return threadWithLikesCount;
   } catch (err) {
     console.error('Error while fetching thread:', err);
     throw new Error('Unable to fetch thread');
@@ -240,5 +265,38 @@ export async function addCommentToThread(
   } catch (err) {
     console.error('Error while adding comment:', err);
     throw new Error('Unable to add comment');
+  }
+}
+
+interface Args {
+  threadId: any;
+  userId: any;
+  path: string;
+}
+export async function updateThreadLikes({ threadId, userId, path }: Args) {
+  try {
+    connectToDB();
+
+    const thread = await Thread.findById(threadId);
+
+    if (!thread) {
+      console.error('Thread not found');
+      throw new Error('Thread not found');
+    }
+
+    if (thread.likes.includes(userId)) {
+      console.error('You already liked this thread');
+      return;
+    }
+
+    thread.likes.push(userId);
+    const likesCount = thread.likes.length;
+
+    await thread.save();
+    revalidatePath(path);
+    console.log(`Success! This thread has ${likesCount} likes.`);
+  } catch (error: any) {
+    console.error('An error occurred:', error);
+    throw new Error('An error occurred:', error);
   }
 }

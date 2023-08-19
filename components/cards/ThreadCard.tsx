@@ -2,6 +2,7 @@ import { formatDateString } from '@/lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
+import LikeComp from '../shared/LikeComp';
 
 interface Props {
   id: string;
@@ -12,6 +13,7 @@ interface Props {
     name: string;
     image: string;
     id: string;
+    _id: string;
   };
   community: {
     name: string;
@@ -26,6 +28,7 @@ interface Props {
   }[];
   isComment?: boolean;
   communityPage?: boolean;
+  likesCount: number;
 }
 
 export default function ThreadCard({
@@ -39,6 +42,7 @@ export default function ThreadCard({
   comments,
   isComment,
   communityPage = false,
+  likesCount,
 }: Props): JSX.Element {
   return (
     <article
@@ -70,13 +74,11 @@ export default function ThreadCard({
 
             <div className={`${isComment && 'mb-10'} mt-5 flex flex-col gap-3`}>
               <div className='flex gap-3.5'>
-                {/* <Image
-                  src='/assets/heart-gray.svg'
-                  alt='heart'
-                  width={24}
-                  height={24}
-                  className='cursor-pointer object-contain'
-                /> */}
+                <LikeComp
+                  likesCount={likesCount}
+                  authorId={JSON.parse(JSON.stringify(author._id))}
+                  id={JSON.parse(JSON.stringify(id))}
+                />
                 <Link href={`/thread/${id}`}>
                   <Image
                     src='/assets/reply.svg'

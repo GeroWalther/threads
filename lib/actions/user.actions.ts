@@ -85,9 +85,21 @@ export async function fetchUserPosts(userId: string) {
             select: 'name image id', // Select the "name" and "_id" fields from the "User" model
           },
         },
+        {
+          path: 'likes', // Populate the likes field
+          model: User,
+          select: '_id name',
+        },
       ],
     });
-    return threads;
+
+    // Calculate likesCount for each thread
+    const threadsWithLikesCount = threads.threads.map((thread: any) => ({
+      ...thread.toObject(),
+      likesCount: thread.likes.length,
+    }));
+
+    return { threads: threadsWithLikesCount };
   } catch (error) {
     console.error('Error fetching user threads:', error);
     throw error;

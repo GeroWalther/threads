@@ -92,12 +92,28 @@ export async function fetchCommunityPosts(id: string) {
             select: 'image _id', // Select the "name" and "_id" fields from the "User" model
           },
         },
+        {
+          path: 'likes', // Populate the likes field
+          model: User,
+          select: '_id name',
+        },
       ],
     });
 
-    return communityPosts;
+    // Calculate the likes count for each thread and its child threads
+    const communityPostsWithLikesCount = communityPosts.threads.map(
+      (thread: any) => ({
+        ...thread.toObject(),
+        likesCount: thread.likes.length,
+        children: thread.children.map((childItem: any) => ({
+          ...childItem.toObject(),
+          likesCount: childItem.likes.length,
+        })),
+      })
+    );
+
+    return { threads: communityPostsWithLikesCount };
   } catch (error) {
-    // Handle any errors
     console.error('Error fetching community posts:', error);
     throw error;
   }
