@@ -76,8 +76,8 @@ export default function ThreadCard({
               <div className='flex gap-3.5'>
                 <LikeComp
                   likesCount={likesCount}
-                  authorId={JSON.parse(JSON.stringify(author._id))}
-                  id={JSON.parse(JSON.stringify(id))}
+                  authorId={author._id}
+                  id={id}
                 />
                 <Link href={`/thread/${id}`}>
                   <Image

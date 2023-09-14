@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation';
 import ThreadCard from '../cards/ThreadCard';
 
 interface Props {
+  userImg: string;
   currentUserId: string;
   accountId: string;
   accountType: string;
@@ -13,6 +14,7 @@ interface Props {
 }
 
 const ThreadsTab = async ({
+  userImg,
   currentUserId,
   accountId,
   accountType,
@@ -25,7 +27,6 @@ const ThreadsTab = async ({
   } else {
     result = await fetchUserPosts(accountId);
   }
-
   const community = {
     name: result.name,
     image: result.image,
@@ -46,13 +47,15 @@ const ThreadsTab = async ({
             accountType === 'User'
               ? {
                   name: result.name,
-                  image: result.image,
+                  image: userImg,
                   id: result.id,
+                  _id: result._id,
                 }
               : {
                   name: thread.author.name,
                   image: thread.author.image,
                   id: thread.author.id,
+                  _id: thread.author._id,
                 }
           }
           community={community}
